@@ -348,7 +348,6 @@ export class Music {
 
         audioStart = this.findAudioStartIndex(responseBytes, audioStart);
 
-
         // Find the closing boundary to properly terminate the audio data
         // Multipart responses end with: \r\n--boundary--\r\n or \n--boundary--\n
         // Try \r\n first (HTTP standard), then fall back to \n
@@ -413,12 +412,12 @@ export class Music {
         return -1;
     }
 
-    private findAudioStartIndex(responseBytes: Uint8Array, startIndex: number): number {        
+    private findAudioStartIndex(responseBytes: Uint8Array, startIndex: number): number {
         const foundAtCRLF = this.findIndex(responseBytes, startIndex, new TextEncoder().encode("\r\n\r\n"));
         if (foundAtCRLF !== -1) {
-            return  foundAtCRLF + 4;
+            return foundAtCRLF + 4;
         }
-        
+
         const foundAtLF = this.findIndex(responseBytes, startIndex, new TextEncoder().encode("\n\n"));
         if (foundAtLF !== -1) {
             return foundAtLF + 2;

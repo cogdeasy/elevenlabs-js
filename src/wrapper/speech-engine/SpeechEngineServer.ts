@@ -71,8 +71,8 @@ export class SpeechEngineServer {
         if (!apiKey && !disableAuth) {
             throw new Error(
                 "SpeechEngine.Server requires an API key to verify incoming connections. " +
-                "Pass { apiKey: \"...\" } or set the ELEVENLABS_API_KEY environment variable. " +
-                "To run without authentication, pass { disableAuth: true } — but only behind an IP allowlist.",
+                    'Pass { apiKey: "..." } or set the ELEVENLABS_API_KEY environment variable. ' +
+                    "To run without authentication, pass { disableAuth: true } — but only behind an IP allowlist.",
             );
         }
 
@@ -82,16 +82,14 @@ export class SpeechEngineServer {
         if (disableAuth) {
             console.warn(
                 "[SpeechEngine] authentication is disabled — incoming connections will NOT be verified. " +
-                "Make sure the server is protected by an IP allowlist restricting traffic to ElevenLabs.",
+                    "Make sure the server is protected by an IP allowlist restricting traffic to ElevenLabs.",
             );
         }
 
         const httpServer = createServer();
         const wss = new WebSocket.Server({ noServer: true });
 
-        const verifyToken = disableAuth
-            ? null
-            : (token: string) => verifySpeechEngineJwt(token, apiKey as string);
+        const verifyToken = disableAuth ? null : (token: string) => verifySpeechEngineJwt(token, apiKey as string);
 
         httpServer.on("upgrade", (req, socket: Duplex, head) => {
             if (verifyToken) {

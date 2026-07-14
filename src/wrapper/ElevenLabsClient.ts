@@ -27,7 +27,11 @@ export class ElevenLabsClient extends FernClient {
         const apiKey = options.apiKey ?? process.env.ELEVENLABS_API_KEY;
         if (apiKey == null) {
             throw new errors.ElevenLabsError({
-                message: "Please pass in your ElevenLabs API Key or export ELEVENLABS_API_KEY in your environment.",
+                message:
+                    "Missing ElevenLabs API key. " +
+                    'Pass it to the client with new ElevenLabsClient({ apiKey: "..." }) ' +
+                    "or set the ELEVENLABS_API_KEY environment variable. " +
+                    "You can create an API key at https://elevenlabs.io/app/settings/api-keys.",
             });
         }
         options.apiKey = apiKey;

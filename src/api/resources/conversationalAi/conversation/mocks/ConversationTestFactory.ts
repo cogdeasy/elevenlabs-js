@@ -11,11 +11,7 @@ export interface TestConversationSetup {
 }
 
 export function createTestConversation(
-    options: {
-        agentId?: string;
-        requiresAuth?: boolean;
-        config?: any;
-    } = {},
+    options: { agentId?: string; requiresAuth?: boolean; config?: any } = {},
 ): TestConversationSetup {
     const mockWebSocketFactory = new MockWebSocketFactory();
     const mockAudio = new MockAudioInterface();

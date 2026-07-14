@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "ES2020",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "@elevenlabs/elevenlabs-js": ["../src/index.ts"]
+        }
+    },
+    "include": ["**/*.ts"]
+}

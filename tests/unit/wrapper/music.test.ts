@@ -3,9 +3,7 @@ import { MusicClient } from "../../../src/api/resources/music/client/Client";
 import { Music } from "../../../src/wrapper/music";
 
 function getPublicMethods(proto: object): string[] {
-    return Object.getOwnPropertyNames(proto).filter(
-        (name) => name !== "constructor" && !name.startsWith("_"),
-    );
+    return Object.getOwnPropertyNames(proto).filter((name) => name !== "constructor" && !name.startsWith("_"));
 }
 
 describe("Music wrapper", () => {

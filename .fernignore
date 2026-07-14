@@ -5,6 +5,7 @@ AGENTS.md
 assets/
 
 tests/custom/
+examples/
 
 src/wrapper
 src/index.ts

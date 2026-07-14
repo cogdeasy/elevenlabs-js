@@ -23,9 +23,7 @@ import { ScribeRealtime, AudioFormat } from "../../src/wrapper/realtime/scribe";
 const TEST_API_KEY = "test_api_key";
 const TEST_MODEL_ID = "scribe_v2_realtime";
 
-async function connectAndGetUrl(
-    overrides: Record<string, unknown> = {}
-): Promise<URL> {
+async function connectAndGetUrl(overrides: Record<string, unknown> = {}): Promise<URL> {
     const scribe = new ScribeRealtime({ apiKey: TEST_API_KEY });
     capturedUrl = undefined;
 

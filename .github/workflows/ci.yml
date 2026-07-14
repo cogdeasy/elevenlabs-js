@@ -3,7 +3,7 @@ name: ci
 on: [push]
 
 jobs:
-    compile:
+    lint:
         runs-on: ubuntu-latest
 
         steps:
@@ -14,12 +14,61 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: lts/Krypton
+
+            - name: Install dependencies
+              run: yarn
+
+            # Biome is scoped to the hand-maintained paths listed in .fernignore so that
+            # Fern-generated code does not fail the lint job.
+            - name: Lint
+              run: yarn lint src/wrapper src/index.ts tests/custom examples
+
+            - name: Check formatting
+              run: yarn format:check src/wrapper src/index.ts tests/custom examples
+
+    compile:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18, 20, 22]
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v5
+
+            - name: Set up node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node-version }}
 
             - name: Compile
               run: yarn && yarn build
 
     test:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                # The generated test suite relies on the global File API, which
+                # requires Node 20+. Node 18 support is still verified by the
+                # compile job.
+                node-version: [20, 22]
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v5
+
+            - name: Set up node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Compile
+              run: yarn && yarn test
+              env:
+                  ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+
+    examples:
+        runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repo
@@ -30,13 +79,14 @@ jobs:
               with:
                   node-version: lts/Krypton
 
-            - name: Compile
-              run: yarn && yarn test
-              env:
-                  ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+            - name: Install dependencies
+              run: yarn
+
+            - name: Type-check examples
+              run: yarn tsc -p examples
 
     publish:
-        needs: [compile, test]
+        needs: [lint, compile, test, examples]
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         runs-on: ubuntu-latest
         environment: npm-publish

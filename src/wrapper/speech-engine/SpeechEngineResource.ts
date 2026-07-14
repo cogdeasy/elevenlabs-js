@@ -74,11 +74,7 @@ export class SpeechEngineResource {
      * });
      * ```
      */
-    attach(
-        httpServer: HttpServer,
-        path: string,
-        handler: SpeechEngineCallbacks,
-    ): SpeechEngineAttachment {
+    attach(httpServer: HttpServer, path: string, handler: SpeechEngineCallbacks): SpeechEngineAttachment {
         const debug = handler.debug ?? false;
         const disableAuth = handler.disableAuth ?? false;
         const log = debug ? (...args: unknown[]) => console.log("[SpeechEngine]", ...args) : () => {};
@@ -86,7 +82,7 @@ export class SpeechEngineResource {
         if (disableAuth) {
             console.warn(
                 "[SpeechEngine] authentication is disabled on attach() — incoming connections will NOT be verified. " +
-                "Make sure the server is protected by either IP allowlist restricting traffic to ElevenLabs or using custom header values.",
+                    "Make sure the server is protected by either IP allowlist restricting traffic to ElevenLabs or using custom header values.",
             );
         }
 
@@ -103,7 +99,7 @@ export class SpeechEngineResource {
 
             if (disableAuth) {
                 log("auth disabled, upgrading connection without verification");
-            } else if (!await this.verifyRequest(req)) {
+            } else if (!(await this.verifyRequest(req))) {
                 // verifyRequest returned false — get the detailed reason for debug logging
                 const reason = await this.getVerificationFailure(req);
                 log(`rejected connection — ${reason}`);
@@ -146,9 +142,9 @@ export class SpeechEngineResource {
     }
 
     /** @internal Returns `null` when the request is valid, or a human-readable reason when rejected. */
-    private async getVerificationFailure(
-        req: { headers: Record<string, string | string[] | undefined> },
-    ): Promise<string | null> {
+    private async getVerificationFailure(req: {
+        headers: Record<string, string | string[] | undefined>;
+    }): Promise<string | null> {
         const apiKey = await core.Supplier.get(this._options.apiKey);
         if (!apiKey) {
             return "no API key configured on the client";
@@ -211,10 +207,7 @@ function base64UrlDecode(input: string): Buffer {
 }
 
 /** @internal — exported for testing only */
-export function verifySpeechEngineJwt(
-    value: string,
-    apiKey: string,
-): Record<string, unknown> {
+export function verifySpeechEngineJwt(value: string, apiKey: string): Record<string, unknown> {
     let token = value.trim();
     if (token.toLowerCase().startsWith("bearer ")) {
         token = token.slice(7).trim();
@@ -238,9 +231,7 @@ export function verifySpeechEngineJwt(
     const trimmedKey = apiKey.trim();
     const secret = createHash("sha256").update(trimmedKey, "utf-8").digest();
 
-    const expectedSignature = createHmac("sha256", secret)
-        .update(`${headerB64}.${payloadB64}`)
-        .digest();
+    const expectedSignature = createHmac("sha256", secret).update(`${headerB64}.${payloadB64}`).digest();
 
     const actualSignature = base64UrlDecode(signatureB64);
 
