@@ -4,6 +4,11 @@ import { RealtimeConnection } from "./connection";
 import * as core from "../../core";
 import * as environments from "../../environments";
 
+const MISSING_API_KEY_MESSAGE =
+    "Missing ElevenLabs API key for the realtime Scribe connection. " +
+    'Pass it to the client with new ElevenLabsClient({ apiKey: "..." }) ' +
+    "or set the ELEVENLABS_API_KEY environment variable.";
+
 export enum AudioFormat {
     PCM_8000 = "pcm_8000",
     PCM_16000 = "pcm_16000",
@@ -112,7 +117,7 @@ export class ScribeRealtime {
 
         // Convert HTTP(S) to WS(S)
         const wsUrl = baseUrl.replace(/^https?:\/\//i, (match: string) =>
-            match.toLowerCase() === "https://" ? "wss://" : "ws://"
+            match.toLowerCase() === "https://" ? "wss://" : "ws://",
         );
 
         return `${wsUrl}/v1/speech-to-text/realtime`;
@@ -126,8 +131,8 @@ export class ScribeRealtime {
         } catch {
             throw new Error(
                 "ffmpeg is required for URL streaming but was not found. " +
-                "Please install ffmpeg and ensure it is available in your PATH. " +
-                "Visit https://ffmpeg.org/download.html for installation instructions."
+                    "Please install ffmpeg and ensure it is available in your PATH. " +
+                    "Visit https://ffmpeg.org/download.html for installation instructions.",
             );
         }
     }
@@ -148,25 +153,31 @@ export class ScribeRealtime {
         }
         if (options.vadSilenceThresholdSecs !== undefined) {
             if (options.vadSilenceThresholdSecs <= 0.3 || options.vadSilenceThresholdSecs > 3.0) {
-                throw new Error("vadSilenceThresholdSecs must be between 0.3 and 3.0");
+                throw new Error(
+                    `vadSilenceThresholdSecs must be between 0.3 and 3.0, but received ${options.vadSilenceThresholdSecs}.`,
+                );
             }
             params.append("vad_silence_threshold_secs", options.vadSilenceThresholdSecs.toString());
         }
         if (options.vadThreshold !== undefined) {
             if (options.vadThreshold < 0.1 || options.vadThreshold > 0.9) {
-                throw new Error("vadThreshold must be between 0.1 and 0.9");
+                throw new Error(`vadThreshold must be between 0.1 and 0.9, but received ${options.vadThreshold}.`);
             }
             params.append("vad_threshold", options.vadThreshold.toString());
         }
         if (options.minSpeechDurationMs !== undefined) {
             if (options.minSpeechDurationMs <= 50 || options.minSpeechDurationMs > 2000) {
-                throw new Error("minSpeechDurationMs must be between 50 and 2000");
+                throw new Error(
+                    `minSpeechDurationMs must be between 50 and 2000, but received ${options.minSpeechDurationMs}.`,
+                );
             }
             params.append("min_speech_duration_ms", options.minSpeechDurationMs.toString());
         }
         if (options.minSilenceDurationMs !== undefined) {
             if (options.minSilenceDurationMs <= 50 || options.minSilenceDurationMs > 2000) {
-                throw new Error("minSilenceDurationMs must be between 50 and 2000");
+                throw new Error(
+                    `minSilenceDurationMs must be between 50 and 2000, but received ${options.minSilenceDurationMs}.`,
+                );
             }
             params.append("min_silence_duration_ms", options.minSilenceDurationMs.toString());
         }
@@ -186,10 +197,6 @@ export class ScribeRealtime {
         }
         if (options.noVerbatim !== undefined) {
             params.append("no_verbatim", options.noVerbatim ? "true" : "false");
-        }
-
-        if (options.audioFormat !== undefined) {
-            params.append("audio_format", options.audioFormat);
         }
 
         const queryString = params.toString();
@@ -227,7 +234,7 @@ export class ScribeRealtime {
     public async connect(options: AudioOptions | UrlOptions): Promise<RealtimeConnection> {
         let apiKey = this.options.apiKey;
         if (!apiKey) {
-            throw new Error("API key is required");
+            throw new Error(MISSING_API_KEY_MESSAGE);
         }
 
         // Resolve API key if it's a function or promise
@@ -239,11 +246,13 @@ export class ScribeRealtime {
         }
 
         if (!apiKey) {
-            throw new Error("API key is required");
+            throw new Error(MISSING_API_KEY_MESSAGE);
         }
 
         if (!options.modelId) {
-            throw new Error("modelId is required");
+            throw new Error(
+                'modelId is required to open a realtime Scribe connection (e.g. { modelId: "scribe_v2_realtime" }).',
+            );
         }
 
         // Create connection object first so users can attach event listeners before messages arrive
@@ -277,7 +286,11 @@ export class ScribeRealtime {
         });
     }
 
-    private async streamFromUrl(options: UrlOptions, connection: RealtimeConnection, commitStrategy: CommitStrategy): Promise<void> {
+    private async streamFromUrl(
+        options: UrlOptions,
+        connection: RealtimeConnection,
+        commitStrategy: CommitStrategy,
+    ): Promise<void> {
         // Check if ffmpeg is installed before attempting to use it
         await this.checkFfmpegInstalled();
 
@@ -286,12 +299,17 @@ export class ScribeRealtime {
 
         // Spawn ffmpeg to convert the stream to 16kHz mono PCM
         const ffmpegProcess = spawn("ffmpeg", [
-            "-i", options.url,
-            "-f", "s16le",           // 16-bit PCM, little-endian
-            "-acodec", "pcm_s16le",  // PCM codec
-            "-ar", "16000",          // 16kHz sample rate
-            "-ac", "1",              // mono (1 channel)
-            "pipe:1"                 // output to stdout
+            "-i",
+            options.url,
+            "-f",
+            "s16le", // 16-bit PCM, little-endian
+            "-acodec",
+            "pcm_s16le", // PCM codec
+            "-ar",
+            "16000", // 16kHz sample rate
+            "-ac",
+            "1", // mono (1 channel)
+            "pipe:1", // output to stdout
         ]);
 
         connection.setFfmpegProcess(ffmpegProcess);
@@ -330,4 +348,3 @@ export class ScribeRealtime {
         });
     }
 }
-

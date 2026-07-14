@@ -45,7 +45,11 @@ export async function play(audio: AsyncIterable<Uint8Array>): Promise<void> {
             }
         });
         ffplay.on("error", (err) => {
-            reject(new ElevenLabsError({ message: `Failed to start ffplay: ${err.message}` }));
+            reject(
+                new ElevenLabsError({
+                    message: `Failed to start ffplay: ${err.message}. Make sure ffmpeg is installed and available in your PATH.`,
+                }),
+            );
         });
     });
 }

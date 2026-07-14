@@ -6,6 +6,8 @@ import * as path from "node:path";
 import crypto from "node:crypto";
 
 const IN_GITHUB = process.env.GITHUB_ACTIONS !== undefined;
+// These suites hit the real ElevenLabs API and only run when an API key is available.
+const describeWithApiKey = process.env.ELEVENLABS_API_KEY ? describe : describe.skip;
 const DEFAULT_VOICE = "eLDc7xhWxG2FElT3kUTj";
 const DEFAULT_TEXT = "Hello";
 const DEFAULT_MODEL = "eleven_multilingual_v2";
@@ -14,7 +16,7 @@ const DEFAULT_VOICE_FILE = path.join(__dirname, "./fixtures/voice_sample.mp3");
 describe("ElevenLabs API Tests", () => {
     jest.setTimeout(120000);
 
-    describe("textToSpeech", () => {
+    describeWithApiKey("textToSpeech", () => {
         it("convert", async () => {
             const client = new ElevenLabsClient();
             const audioStream = await client.textToSpeech.convert(DEFAULT_VOICE, {
@@ -64,7 +66,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("speechToText", () => {
+    describeWithApiKey("speechToText", () => {
         it("convert", async () => {
             const client = new ElevenLabsClient();
             const audioFile = fs.readFileSync(DEFAULT_VOICE_FILE);
@@ -92,7 +94,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("audioIsolation", () => {
+    describeWithApiKey("audioIsolation", () => {
         it("audioIsolation", async () => {
             const client = new ElevenLabsClient();
 
@@ -115,7 +117,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("voices", () => {
+    describeWithApiKey("voices", () => {
         it("getAll", async () => {
             const client = new ElevenLabsClient();
 
@@ -134,7 +136,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("textToVoice", () => {
+    describeWithApiKey("textToVoice", () => {
         it("createPreviews", async () => {
             const client = new ElevenLabsClient();
 
@@ -156,7 +158,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("textToSoundEffects", () => {
+    describeWithApiKey("textToSoundEffects", () => {
         it("convert", async () => {
             const client = new ElevenLabsClient();
 
@@ -170,7 +172,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("models", () => {
+    describeWithApiKey("models", () => {
         it("getAll", async () => {
             const client = new ElevenLabsClient();
             const models = await client.models.list();
@@ -178,7 +180,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("speechToSpeech", () => {
+    describeWithApiKey("speechToSpeech", () => {
         it("convert", async () => {
             const client = new ElevenLabsClient();
             const audioFile = fs.readFileSync(DEFAULT_VOICE_FILE);
@@ -200,7 +202,7 @@ describe("ElevenLabs API Tests", () => {
         });
     });
 
-    describe("history", () => {
+    describeWithApiKey("history", () => {
         it("getAll", async () => {
             const client = new ElevenLabsClient();
             const history = await client.history.list({ pageSize: 5 });

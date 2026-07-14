@@ -20,17 +20,12 @@ function base64UrlEncode(data: Buffer | string): string {
     return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function createTestJwt(
-    payload: Record<string, unknown>,
-    apiKey: string = TEST_API_KEY,
-): string {
+function createTestJwt(payload: Record<string, unknown>, apiKey: string = TEST_API_KEY): string {
     const header = { alg: "HS256", typ: "JWT" };
     const headerB64 = base64UrlEncode(JSON.stringify(header));
     const payloadB64 = base64UrlEncode(JSON.stringify(payload));
     const secret = createHash("sha256").update(apiKey, "utf-8").digest();
-    const signature = createHmac("sha256", secret)
-        .update(`${headerB64}.${payloadB64}`)
-        .digest();
+    const signature = createHmac("sha256", secret).update(`${headerB64}.${payloadB64}`).digest();
     return `${headerB64}.${payloadB64}.${base64UrlEncode(signature)}`;
 }
 
@@ -60,7 +55,11 @@ async function closeWs(ws: WebSocket): Promise<void> {
     return new Promise<void>((r) => {
         ws.on("close", () => r());
         ws.on("error", () => r());
-        try { ws.close(); } catch { r(); }
+        try {
+            ws.close();
+        } catch {
+            r();
+        }
     });
 }
 
@@ -107,13 +106,18 @@ describe("SpeechEngineResource", () => {
         trackAttachment(resource.attach(httpServer, "/se", { onTranscript }));
 
         const ws = trackClientWs(new WebSocket(`ws://127.0.0.1:${port}/se`));
-        await new Promise<void>((r, e) => { ws.on("open", r); ws.on("error", e); });
+        await new Promise<void>((r, e) => {
+            ws.on("open", r);
+            ws.on("error", e);
+        });
 
-        ws.send(JSON.stringify({
-            type: "user_transcript",
-            user_transcript: [{ role: "user", content: "hello" }],
-            event_id: 1,
-        }));
+        ws.send(
+            JSON.stringify({
+                type: "user_transcript",
+                user_transcript: [{ role: "user", content: "hello" }],
+                event_id: 1,
+            }),
+        );
 
         await new Promise((r) => setTimeout(r, 50));
         expect(onTranscript).toHaveBeenCalledTimes(1);
@@ -128,7 +132,9 @@ describe("SpeechEngineResource", () => {
         // connections that are intentionally left open (not destroyed) by
         // the path-mismatch branch.
         const upgradeSockets: import("node:stream").Duplex[] = [];
-        httpServer.on("upgrade", (_req, socket) => { upgradeSockets.push(socket); });
+        httpServer.on("upgrade", (_req, socket) => {
+            upgradeSockets.push(socket);
+        });
 
         const onTranscript = jest.fn();
         const resource = makeResource();
@@ -179,30 +185,36 @@ describe("SpeechEngineResource", () => {
 
         const resource = makeResource();
         jest.spyOn(resource, "verifyRequest").mockResolvedValue(true);
-        trackAttachment(resource.attach(httpServer, "/se", {
-            onTranscript(transcript, _signal, session) {
-                const last = transcript[transcript.length - 1];
-                session.sendResponse(`echo: ${last.content}`);
-            },
-        }));
+        trackAttachment(
+            resource.attach(httpServer, "/se", {
+                onTranscript(transcript, _signal, session) {
+                    const last = transcript[transcript.length - 1];
+                    session.sendResponse(`echo: ${last.content}`);
+                },
+            }),
+        );
 
         const ws = trackClientWs(new WebSocket(`ws://127.0.0.1:${port}/se`));
         const responsePromise = new Promise<string>((resolve) => {
             ws.on("message", (data) => resolve(data.toString()));
         });
 
-        await new Promise<void>((r, e) => { ws.on("open", r); ws.on("error", e); });
+        await new Promise<void>((r, e) => {
+            ws.on("open", r);
+            ws.on("error", e);
+        });
 
-        ws.send(JSON.stringify({
-            type: "user_transcript",
-            user_transcript: [{ role: "user", content: "hello" }],
-            event_id: 1,
-        }));
+        ws.send(
+            JSON.stringify({
+                type: "user_transcript",
+                user_transcript: [{ role: "user", content: "hello" }],
+                event_id: 1,
+            }),
+        );
 
         const response = JSON.parse(await responsePromise);
         expect(response).toEqual({ type: "agent_response", content: "echo: hello", event_id: 1, is_final: false });
     });
-
 
     // -----------------------------------------------------------------------
     // attach — close
@@ -240,15 +252,15 @@ describe("SpeechEngineResource", () => {
             const port = getPort(httpServer);
 
             // No apiKey configured — normally this would reject every connection.
-            const resource = new SpeechEngineResource(
-                "seng_test",
-                normalizeClientOptions({ apiKey: undefined }),
-            );
+            const resource = new SpeechEngineResource("seng_test", normalizeClientOptions({ apiKey: undefined }));
             const verifySpy = jest.spyOn(resource, "verifyRequest");
             trackAttachment(resource.attach(httpServer, "/se", { disableAuth: true }));
 
             const ws = trackClientWs(new WebSocket(`ws://127.0.0.1:${port}/se`));
-            await new Promise<void>((r, e) => { ws.on("open", r); ws.on("error", e); });
+            await new Promise<void>((r, e) => {
+                ws.on("open", r);
+                ws.on("error", e);
+            });
 
             expect(verifySpy).not.toHaveBeenCalled();
         });
@@ -341,10 +353,7 @@ describe("SpeechEngineResource", () => {
         });
 
         it("returns false when apiKey is not configured", async () => {
-            const resource = new SpeechEngineResource(
-                "seng_test",
-                normalizeClientOptions({ apiKey: undefined }),
-            );
+            const resource = new SpeechEngineResource("seng_test", normalizeClientOptions({ apiKey: undefined }));
             const token = createTestJwt(validPayload());
             const result = await resource.verifyRequest({
                 headers: { "x-elevenlabs-speech-engine-authorization": token },
@@ -361,5 +370,4 @@ describe("SpeechEngineResource", () => {
             expect(result).toBe(true);
         });
     });
-
 });

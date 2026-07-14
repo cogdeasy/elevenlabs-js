@@ -14,7 +14,7 @@ export async function stream(audio: ReadableStream<Uint8Array>): Promise<void> {
 
     if (!commandExists.sync("mpv")) {
         throw new ElevenLabsError({
-            message: `mpv not found, necessary to stream audio."
+            message: `mpv not found, necessary to stream audio.
             On mac you can install it with 'brew install mpv'.
             On linux and windows you can install it from https://mpv.io/`,
         });
@@ -45,7 +45,11 @@ export async function stream(audio: ReadableStream<Uint8Array>): Promise<void> {
             }
         });
         mpv.on("error", (err) => {
-            reject(new ElevenLabsError({ message: `Failed to start mpv: ${err.message}` }));
+            reject(
+                new ElevenLabsError({
+                    message: `Failed to start mpv: ${err.message}. Make sure mpv is installed and available in your PATH.`,
+                }),
+            );
         });
     });
 }

@@ -29,6 +29,5 @@ export {
     AudioFormat,
     CommitStrategy,
     type AudioOptions,
-    type UrlOptions
+    type UrlOptions,
 } from "./scribe";
-
