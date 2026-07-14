@@ -1,8 +1,8 @@
-import type { SpeechToTextClient } from "../../api/resources/speechToText/client/Client";
 import WebSocket from "ws";
-import { RealtimeConnection } from "./connection";
+import type { SpeechToTextClient } from "../../api/resources/speechToText/client/Client";
 import * as core from "../../core";
 import * as environments from "../../environments";
+import { RealtimeConnection } from "./connection";
 
 const MISSING_API_KEY_MESSAGE =
     "Missing ElevenLabs API key for the realtime Scribe connection. " +

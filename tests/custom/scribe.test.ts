@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 // Mock `ws` before importing ScribeRealtime so it never opens a real socket.
 let capturedUrl: string | undefined;
@@ -18,7 +18,7 @@ jest.mock("ws", () => {
     };
 });
 
-import { ScribeRealtime, AudioFormat } from "../../src/wrapper/realtime/scribe";
+import { AudioFormat, ScribeRealtime } from "../../src/wrapper/realtime/scribe";
 
 const TEST_API_KEY = "test_api_key";
 const TEST_MODEL_ID = "scribe_v2_realtime";

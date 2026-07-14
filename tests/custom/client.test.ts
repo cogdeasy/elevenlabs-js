@@ -1,9 +1,9 @@
-import { describe, it } from "@jest/globals";
-import { ElevenLabsClient, play, stream } from "../../src";
-import { Readable } from "node:stream";
+import crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import crypto from "node:crypto";
+import { Readable } from "node:stream";
+import { describe, it } from "@jest/globals";
+import { ElevenLabsClient, play } from "../../src";
 
 const IN_GITHUB = process.env.GITHUB_ACTIONS !== undefined;
 // These suites hit the real ElevenLabs API and only run when an API key is available.

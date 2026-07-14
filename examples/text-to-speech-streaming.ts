@@ -9,7 +9,9 @@ import { createWriteStream } from "node:fs";
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
 async function main(): Promise<void> {
-    const client = new ElevenLabsClient();
+    const client = new ElevenLabsClient(
+        process.env.ELEVENLABS_BASE_URL ? { baseUrl: process.env.ELEVENLABS_BASE_URL } : {},
+    );
 
     const audioStream = await client.textToSpeech.stream("JBFqnCBsd6RMkjVDRZzb", {
         text: "Streaming lets you start playback before the full audio is generated.",

@@ -51,7 +51,7 @@ export class ElevenLabsClient extends FernClient {
         }
         // Return wrapper Music cast as GeneratedMusic to maintain type compatibility
         // The wrapper has enhanced composeDetailed that returns MultipartResponse
-        return this._customMusic as any as GeneratedMusic;
+        return this._customMusic as unknown as GeneratedMusic;
     }
 
     public get speechToText(): SpeechToText {

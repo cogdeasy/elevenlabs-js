@@ -2,8 +2,8 @@ import { createHash, createHmac } from "node:crypto";
 import http from "node:http";
 import WebSocket from "ws";
 import { normalizeClientOptions } from "../../../src/BaseClient";
+import type { SpeechEngineAttachment } from "../../../src/wrapper/speech-engine/SpeechEngineAttachment";
 import { SpeechEngineResource, verifySpeechEngineJwt } from "../../../src/wrapper/speech-engine/SpeechEngineResource";
-import { SpeechEngineAttachment } from "../../../src/wrapper/speech-engine/SpeechEngineAttachment";
 
 const TEST_API_KEY = "test-key";
 const testOptions = normalizeClientOptions({ apiKey: TEST_API_KEY });
@@ -68,7 +68,9 @@ describe("SpeechEngineResource", () => {
 
     afterEach(async () => {
         while (cleanups.length > 0) {
-            await cleanups.pop()!().catch(() => {});
+            await cleanups
+                .pop()?.()
+                .catch(() => {});
         }
     });
 

@@ -48,10 +48,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                # The generated test suite relies on the global File API, which
-                # requires Node 20+. Node 18 support is still verified by the
-                # compile job.
-                node-version: [20, 22]
+                node-version: [18, 20, 22]
 
         steps:
             - name: Checkout repo
@@ -62,8 +59,19 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: Compile
+            - name: Test
+              if: matrix.node-version != 18
               run: yarn && yarn test
+              env:
+                  ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+
+            # The generated tests/unit/file suite relies on the global File API,
+            # which requires Node 20+, so it is excluded on Node 18 (along with
+            # the wire project, which the ignore-pattern override would otherwise
+            # leak into the unit project). Everything else runs on Node 18 too.
+            - name: Test (Node 18, excluding File-API tests)
+              if: matrix.node-version == 18
+              run: yarn && yarn test --testPathIgnorePatterns "/tests/wire/" "/tests/unit/file/"
               env:
                   ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
 
@@ -84,6 +92,9 @@ jobs:
 
             - name: Type-check examples
               run: yarn tsc -p examples
+
+            - name: Smoke-run examples against a mock server
+              run: node examples/smoke/run.mjs
 
     publish:
         needs: [lint, compile, test, examples]
