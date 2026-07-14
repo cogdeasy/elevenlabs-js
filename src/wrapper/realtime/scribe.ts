@@ -152,7 +152,7 @@ export class ScribeRealtime {
             params.append("audio_format", options.audioFormat);
         }
         if (options.vadSilenceThresholdSecs !== undefined) {
-            if (options.vadSilenceThresholdSecs <= 0.3 || options.vadSilenceThresholdSecs > 3.0) {
+            if (options.vadSilenceThresholdSecs < 0.3 || options.vadSilenceThresholdSecs > 3.0) {
                 throw new Error(
                     `vadSilenceThresholdSecs must be between 0.3 and 3.0, but received ${options.vadSilenceThresholdSecs}.`,
                 );
@@ -166,7 +166,7 @@ export class ScribeRealtime {
             params.append("vad_threshold", options.vadThreshold.toString());
         }
         if (options.minSpeechDurationMs !== undefined) {
-            if (options.minSpeechDurationMs <= 50 || options.minSpeechDurationMs > 2000) {
+            if (options.minSpeechDurationMs < 50 || options.minSpeechDurationMs > 2000) {
                 throw new Error(
                     `minSpeechDurationMs must be between 50 and 2000, but received ${options.minSpeechDurationMs}.`,
                 );
@@ -174,7 +174,7 @@ export class ScribeRealtime {
             params.append("min_speech_duration_ms", options.minSpeechDurationMs.toString());
         }
         if (options.minSilenceDurationMs !== undefined) {
-            if (options.minSilenceDurationMs <= 50 || options.minSilenceDurationMs > 2000) {
+            if (options.minSilenceDurationMs < 50 || options.minSilenceDurationMs > 2000) {
                 throw new Error(
                     `minSilenceDurationMs must be between 50 and 2000, but received ${options.minSilenceDurationMs}.`,
                 );

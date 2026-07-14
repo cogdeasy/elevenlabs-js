@@ -13,13 +13,13 @@ const PORT = 3001;
 
 const server = new SpeechEngine.Server({
     port: PORT,
-    onInit(conversationId, session) {
+    onInit(conversationId) {
         console.log(`Session started: ${conversationId}`);
-        session.sendResponse("Hello! I am an echo agent — say something and I will repeat it.");
     },
     onTranscript(transcript, _signal, session) {
-        console.log(`User said: ${transcript}`);
-        session.sendResponse(`You said: ${transcript}`);
+        const lastMessage = transcript[transcript.length - 1];
+        console.log(`User said: ${lastMessage.content}`);
+        session.sendResponse(`You said: ${lastMessage.content}`);
     },
     onClose(session) {
         console.log(`Session closed: ${session.conversationId}`);

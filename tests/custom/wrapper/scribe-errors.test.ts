@@ -71,6 +71,17 @@ describe("ScribeRealtime error messages", () => {
             /minSilenceDurationMs must be between 50 and 2000, but received 10/,
         );
     });
+
+    it("accepts the documented lower-bound values", async () => {
+        const connection = await connect({
+            vadSilenceThresholdSecs: 0.3,
+            vadThreshold: 0.1,
+            minSpeechDurationMs: 50,
+            minSilenceDurationMs: 50,
+        });
+        connection.close();
+        expect(capturedUrl).toBeDefined();
+    });
 });
 
 describe("ScribeRealtime URI building", () => {
