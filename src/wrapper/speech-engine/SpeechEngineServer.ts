@@ -1,9 +1,9 @@
 import { createServer, type Server as HttpServer } from "node:http";
 import type { Duplex } from "node:stream";
 import WebSocket from "ws";
-import { isAbortError, type SpeechEngineCallbacks } from "./types";
-import { SpeechEngineSession } from "./SpeechEngineSession";
 import { verifySpeechEngineJwt } from "./SpeechEngineResource";
+import { SpeechEngineSession } from "./SpeechEngineSession";
+import { isAbortError, type SpeechEngineCallbacks } from "./types";
 
 export interface SpeechEngineServerOptions extends SpeechEngineCallbacks {
     /**

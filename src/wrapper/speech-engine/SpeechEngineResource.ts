@@ -1,13 +1,13 @@
 import { createHash, createHmac } from "node:crypto";
-import type { IncomingMessage, Server as HttpServer } from "node:http";
+import type { Server as HttpServer, IncomingMessage } from "node:http";
 import type { Duplex } from "node:stream";
 import WebSocket from "ws";
+import type * as ElevenLabs from "../../api/types";
 import type { BaseClientOptions, NormalizedClientOptions } from "../../BaseClient";
 import * as core from "../../core";
-import type * as ElevenLabs from "../../api/types";
-import { isAbortError, type SpeechEngineCallbacks } from "./types";
-import { SpeechEngineSession } from "./SpeechEngineSession";
 import { SpeechEngineAttachment } from "./SpeechEngineAttachment";
+import { SpeechEngineSession } from "./SpeechEngineSession";
+import { isAbortError, type SpeechEngineCallbacks } from "./types";
 
 /**
  * Represents a speech engine instance. Returned by `elevenlabs.speechEngine.get()`.

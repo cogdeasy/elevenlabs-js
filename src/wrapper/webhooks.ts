@@ -1,6 +1,6 @@
 import { webcrypto as nodeWebcrypto } from "crypto";
-import { ElevenLabsError } from "../errors";
 import { WebhooksClient as Webhooks } from "../api/resources/webhooks/client/Client";
+import { ElevenLabsError } from "../errors";
 
 const crypto = globalThis.crypto ?? nodeWebcrypto;
 
@@ -33,7 +33,7 @@ export class WebhooksClient extends Webhooks {
      * @returns The verified webhook event
      * @throws {ElevenLabsError} if the signature is invalid or missing
      */
-    async constructEvent(rawBody: string, sigHeader: string, secret: string): Promise<any> {
+    async constructEvent(rawBody: string, sigHeader: string, secret: string): Promise<unknown> {
         if (!sigHeader) {
             throw new ElevenLabsError({
                 message: "Missing signature header",

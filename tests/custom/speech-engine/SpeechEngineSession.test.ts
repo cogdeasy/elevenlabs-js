@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import WebSocket from "ws";
-import { SpeechEngineSession } from "../../../src/wrapper/speech-engine/SpeechEngineSession";
 import { SpeechEngine } from "../../../src/wrapper/speech-engine";
+import { SpeechEngineSession } from "../../../src/wrapper/speech-engine/SpeechEngineSession";
 import type { TranscriptMessage, WebSocketLike } from "../../../src/wrapper/speech-engine/types";
 
 class MockWebSocket extends EventEmitter implements WebSocketLike {
@@ -153,7 +153,7 @@ describe("SpeechEngineSession", () => {
         ws.receiveMessage({ type: "close" });
 
         expect(closeHandler).toHaveBeenCalledTimes(1);
-        expect(capturedSignal!.aborted).toBe(true);
+        expect(capturedSignal?.aborted).toBe(true);
     });
 
     // -----------------------------------------------------------------------
@@ -194,7 +194,7 @@ describe("SpeechEngineSession", () => {
         ws.receiveMessage({ type: "user_transcript", user_transcript: transcript, event_id: 1 });
         ws.close();
 
-        expect(capturedSignal!.aborted).toBe(true);
+        expect(capturedSignal?.aborted).toBe(true);
     });
 
     it("emits error on WebSocket error", () => {

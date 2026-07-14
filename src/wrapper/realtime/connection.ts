@@ -1,6 +1,6 @@
-import WebSocket from "ws";
 import type { ChildProcess } from "node:child_process";
 import { EventEmitter } from "node:events";
+import WebSocket from "ws";
 import type { AudioFormat, CommitStrategy } from "./scribe";
 
 export interface InputAudioChunk {

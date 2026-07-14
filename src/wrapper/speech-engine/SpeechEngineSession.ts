@@ -1,8 +1,8 @@
 import { EventEmitter } from "node:events";
 import WebSocket from "ws";
 import {
-    isAbortError,
     type IncomingMessage,
+    isAbortError,
     type SpeechEngineEventMap,
     type SpeechEngineEventName,
     type WebSocketLike,
@@ -53,17 +53,17 @@ export class SpeechEngineSession {
     // -----------------------------------------------------------------------
 
     on<E extends SpeechEngineEventName>(event: E, listener: (...args: SpeechEngineEventMap[E]) => void): this {
-        this.emitter.on(event, listener as (...args: any[]) => void);
+        this.emitter.on(event, listener as (...args: unknown[]) => void);
         return this;
     }
 
     off<E extends SpeechEngineEventName>(event: E, listener: (...args: SpeechEngineEventMap[E]) => void): this {
-        this.emitter.off(event, listener as (...args: any[]) => void);
+        this.emitter.off(event, listener as (...args: unknown[]) => void);
         return this;
     }
 
     once<E extends SpeechEngineEventName>(event: E, listener: (...args: SpeechEngineEventMap[E]) => void): this {
-        this.emitter.once(event, listener as (...args: any[]) => void);
+        this.emitter.once(event, listener as (...args: unknown[]) => void);
         return this;
     }
 

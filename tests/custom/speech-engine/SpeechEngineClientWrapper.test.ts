@@ -14,7 +14,7 @@ describe("SpeechEngineClientWrapper", () => {
             const wrapper = new SpeechEngineClientWrapper(TEST_OPTIONS);
             jest.spyOn(SpeechEngineClient.prototype, "create").mockResolvedValue({
                 speechEngineId: "seng_abc",
-            } as any);
+            } as never);
 
             const result = await wrapper.create({ speechEngine: { wsUrl: "wss://test" } });
 
@@ -26,7 +26,7 @@ describe("SpeechEngineClientWrapper", () => {
     describe("get", () => {
         it("returns a SpeechEngineResource with the requested ID", async () => {
             const wrapper = new SpeechEngineClientWrapper(TEST_OPTIONS);
-            jest.spyOn(SpeechEngineClient.prototype, "get").mockResolvedValue({} as any);
+            jest.spyOn(SpeechEngineClient.prototype, "get").mockResolvedValue({} as never);
 
             const result = await wrapper.get("seng_abc");
 
@@ -38,7 +38,7 @@ describe("SpeechEngineClientWrapper", () => {
     describe("update", () => {
         it("returns a SpeechEngineResource with the requested ID", async () => {
             const wrapper = new SpeechEngineClientWrapper(TEST_OPTIONS);
-            jest.spyOn(SpeechEngineClient.prototype, "update").mockResolvedValue({} as any);
+            jest.spyOn(SpeechEngineClient.prototype, "update").mockResolvedValue({} as never);
 
             const result = await wrapper.update("seng_abc", { name: "Renamed" });
 

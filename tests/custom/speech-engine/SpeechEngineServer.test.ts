@@ -26,8 +26,7 @@ describe("SpeechEngineServer", () => {
     const cleanups: Array<() => Promise<void>> = [];
 
     afterEach(async () => {
-        while (cleanups.length > 0) {
-            const fn = cleanups.pop()!;
+        for (let fn = cleanups.pop(); fn !== undefined; fn = cleanups.pop()) {
             await fn().catch(() => {});
         }
     });
